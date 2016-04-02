@@ -6,7 +6,7 @@
 // 
 //     Connection String Name: `connectionString`
 //     Provider:               `System.Data.SQLite`
-//     Connection String:      `Data Source=E:\Tools\SQLite\northwindEF.db;Version=3;`
+//     Connection String:      `Data Source=D:\Workspace\Generator\Generator\Database\northwindEF.db;Version=3;`
 //     Schema:                 ``
 //     Include Views:          `False`
 

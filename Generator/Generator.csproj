@@ -52,9 +52,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Column.cs" />
-    <Compile Include="Inflector.cs" />
-    <Compile Include="Models.cs">
+    <Compile Include="Cmmon\Column.cs" />
+    <Compile Include="Cmmon\Inflector.cs" />
+    <Compile Include="T4\Models.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Models.tt</DependentUpon>
@@ -65,21 +65,22 @@
     <Compile Include="Schema\PostGreSqlSchemaReader.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SchemaReader.cs" />
+    <Compile Include="Cmmon\SchemaReader.cs" />
     <Compile Include="Schema\SQLiteSchemaReader.cs" />
     <Compile Include="Schema\SqlServerCeSchemaReader.cs" />
     <Compile Include="Schema\SqlServerSchemaReader.cs" />
-    <Compile Include="Table.cs" />
-    <Compile Include="Tables.cs" />
+    <Compile Include="Cmmon\Table.cs" />
+    <Compile Include="Cmmon\Tables.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="Database\northwindEF.db" />
     <None Include="packages.config" />
-    <None Include="PetaPoco.Core.ttinclude" />
-    <None Include="PetaPoco.Generator.ttinclude" />
+    <None Include="T4\PetaPoco.Core.ttinclude" />
+    <None Include="T4\PetaPoco.Generator.ttinclude" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Models.tt">
+    <Content Include="T4\Models.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>Models.cs</LastGenOutput>
     </Content>

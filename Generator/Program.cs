@@ -34,6 +34,11 @@ namespace Generator
             catch (Exception x)
             {
                 var error = x.Message.Replace("\r\n", "\n").Replace("\n", " ");
+                Console.WriteLine("");
+                Console.WriteLine("// -----------------------------------------------------------------------------------------");
+                Console.WriteLine("// Failed to load provider `{0}` - {1}", ProviderName, error);
+                Console.WriteLine("// -----------------------------------------------------------------------------------------");
+                Console.WriteLine("");
                 return;
             }
 
@@ -120,21 +125,30 @@ namespace Generator
                         }
                     }
 
-                    // result here
-
-                    return;
+                    // print result here
+                    foreach (var table in result)
+                    {
+                        Console.WriteLine(table.Name + ":");
+                        foreach (var column in table.Columns)
+                        {
+                            Console.Write("\t");
+                            Console.WriteLine(column.Name + " | " + column.PropertyType + " | " +
+                                              (column.IsPK ? "pk" : "--") + " | " +
+                                              (column.IsNullable ? "null" : "not null") + " | " +
+                                              (column.IsAutoIncrement ? "identity" : "--"));
+                        }
+                        Console.WriteLine();
+                    }
                 }
             }
             catch (Exception x)
             {
                 var error = x.Message.Replace("\r\n", "\n").Replace("\n", " ");
-                //Warning(string.Format("Failed to read database schema - {0}", error));
-                //WriteLine("");
-                //WriteLine("// -----------------------------------------------------------------------------------------");
-                //WriteLine("// Failed to read database schema - {0}", error);
-                //WriteLine("// -----------------------------------------------------------------------------------------");
-                //WriteLine("");
-                return;
+                Console.WriteLine("");
+                Console.WriteLine("// -----------------------------------------------------------------------------------------");
+                Console.WriteLine("// Failed to read database schema - {0}", error);
+                Console.WriteLine("// -----------------------------------------------------------------------------------------");
+                Console.WriteLine("");
             }
         }
     }
