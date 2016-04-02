@@ -11,7 +11,7 @@ namespace <#=Namespace #>
 foreach(Table tbl in from t in tables where !t.Ignore select t)
 {
 #>
-    public partial class <#=tbl.ClassName#>
+    public partial class <#=tbl.Name#>
     {
 <#
 foreach(Column col in from c in tbl.Columns where !c.Ignore select c)

@@ -32,8 +32,8 @@ namespace Generator
                     Table tbl = new Table();
                     tbl.Name = row["TABLE_NAME"].ToString();
                     tbl.Schema = row["TABLE_SCHEMA"].ToString();
-                    // todo have not deal with the 'view' object
-                    tbl.IsView = string.Compare(row["TABLE_TYPE"].ToString().ToUpper(), "VIEW", true) == 0;
+                    // Access do not support view
+                    tbl.IsView = false;
                     tbl.CleanName = CleanUp(tbl.Name);
                     tbl.ClassName = Inflector.MakeSingular(tbl.CleanName);
 
@@ -86,7 +86,7 @@ namespace Generator
                     col.PropertyName = CleanUp(col.Name);
                     col.PropertyType = GetPropertyType(row["DATA_TYPE"].ToString());
                     col.IsNullable = Convert.ToBoolean(row["IS_NULLABLE"]);
-                    // oledb does not support an identity column
+                    // OleDb does not support an identity column
                     // so just see if there is an 'ID' column instead
                     col.IsAutoIncrement = col.Name == "ID" && !col.IsNullable;
                     result.Add(col);

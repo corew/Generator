@@ -10,6 +10,7 @@
 <#@ import namespace="System.Data" #>
 <#@ import namespace="System.Data.SqlClient" #>
 <#@ import namespace="System.Data.Common" #>
+<#@ import namespace="System.Data.OleDb" #>
 <#@ import namespace="System.Diagnostics" #>
 <#@ import namespace="System.Globalization" #>
 <#@ import namespace="System.IO" #>
@@ -32,6 +33,7 @@
 	* MySQL
 	* PostGreSQL
 	* Oracle
+	* OleDb for access
 
  For connection and provider settings the template will look for the web.config or app.config file of the 
  containing Visual Studio project.  It will not however read DbProvider settings from this file.
@@ -392,6 +394,11 @@ Tables LoadTables()
 			{
 				// Oracle
 				reader=new OracleSchemaReader();
+			}
+			else if (_factory.GetType().Name == "OleDbFactory")
+			{
+				// Oracle
+				reader=new OleDbSchemaReader();
 			}
 			else
 			{
@@ -1343,156 +1350,163 @@ from USER_VIEWS";
 
 class OleDbSchemaReader : SchemaReader
 {
-	DbConnection _connection;
-	DbProviderFactory _factory;
+    // SchemaReader.ReadSchema
+    public override Tables ReadSchema(DbConnection connection, DbProviderFactory factory)
+    {
+        var result = new Tables();
 
-	// SchemaReader.ReadSchema
-	public override Tables ReadSchema(DbConnection connection, DbProviderFactory factory)
-	{
-		var result=new Tables();
-		
-		_connection=connection;
-		_factory=factory;
+        _connection = connection;
+        _factory = factory;
 
-		
 
-		foreach (var tbl in result)
-		{
-			tbl.Columns=LoadColumns(tbl);
-		            
-			// Mark the primary key
-			string PrimaryKey=GetPK(tbl.Name);
-			var pkColumn=tbl.Columns.SingleOrDefault(x=>x.Name.ToLower().Trim()==PrimaryKey.ToLower().Trim());
-			if(pkColumn!=null)
-			{
-				pkColumn.IsPK=true;
-			}
-		}
-	    
+        var cnn = _connection as OleDbConnection;
+        if (cnn != null)
+        {
+            var dt = cnn.GetOleDbSchemaTable(
+                OleDbSchemaGuid.Tables,
+                new object[] { null, null, null, "TABLE" });
 
-		return result;
-	}
+            foreach (DataRow row in dt.Rows)
+            {
+                Table tbl = new Table();
+                tbl.Name = row["TABLE_NAME"].ToString();
+                tbl.Schema = row["TABLE_SCHEMA"].ToString();
+                // Access do not support view
+                tbl.IsView = false;
+                tbl.CleanName = CleanUp(tbl.Name);
+                tbl.ClassName = Inflector.MakeSingular(tbl.CleanName);
 
-	List<Column> LoadColumns(Table tbl)
-	{
-	
-		using (var cmd=_factory.CreateCommand())
-		{
-			cmd.Connection=_connection;
-			cmd.CommandText=COLUMN_SQL;
+                result.Add(tbl);
+            }
+        }
 
-			var p = cmd.CreateParameter();
-			p.ParameterName = "@tableName";
-			p.Value=tbl.Name;
-			cmd.Parameters.Add(p);
+        foreach (var tbl in result)
+        {
+            tbl.Columns = LoadColumns(tbl);
 
-			p = cmd.CreateParameter();
-			p.ParameterName = "@schemaName";
-			p.Value=tbl.Schema;
-			cmd.Parameters.Add(p);
+            // Mark the primary key
+            string PrimaryKey = GetPK(tbl.Name);
+            var pkColumn = tbl.Columns.SingleOrDefault(x => x.Name.ToLower().Trim() == PrimaryKey.ToLower().Trim());
+            if (pkColumn != null)
+            {
+                pkColumn.IsPK = true;
+            }
+        }
 
-			var result=new List<Column>();
-			using (IDataReader rdr=cmd.ExecuteReader())
-			{
-				while(rdr.Read())
-				{
-					Column col=new Column();
-					col.Name=rdr["ColumnName"].ToString();
-					col.PropertyName=CleanUp(col.Name);
-					col.PropertyType=GetPropertyType(rdr["DataType"].ToString());
-					col.IsNullable=rdr["IsNullable"].ToString()=="YES";
-					col.IsAutoIncrement=((int)rdr["IsIdentity"])==1;
-					result.Add(col);
-				}
-			}
 
-			return result;
-		}
-	}
+        return result;
+    }
 
-	string GetPK(string table){
-		
-		
+    DbConnection _connection;
+    DbProviderFactory _factory;
 
-		using (var cmd=_factory.CreateCommand())
-		{
-			cmd.Connection=_connection;
-			cmd.CommandText=sql;
 
-			var p = cmd.CreateParameter();
-			p.ParameterName = "@tableName";
-			p.Value=table;
-			cmd.Parameters.Add(p);
+    List<Column> LoadColumns(Table tbl)
+    {
+        var result = new List<Column>();
+        var cnn = _connection as OleDbConnection;
+        if (cnn != null)
+        {
+            var dt = cnn.GetOleDbSchemaTable(
+                OleDbSchemaGuid.Columns,
+                new object[] { null, null, tbl.Name, null });
 
-			var result=cmd.ExecuteScalar();
+            foreach (DataColumn col in dt.Columns)
+            {
+                Console.WriteLine(col.ColumnName);
+            }
 
-			if(result!=null)
-				return result.ToString();    
-		}	         
-		
-		return "";
-	}
-	
-	string GetPropertyType(string sqlType)
-	{
-		string sysType="string";
-		switch (sqlType) 
-		{
-			case "bigint":
-				sysType = "long";
-				break;
-			case "smallint":
-				sysType= "short";
-				break;
-			case "int":
-				sysType= "int";
-				break;
-			case "uniqueidentifier":
-				sysType=  "Guid";
-				 break;
-			case "smalldatetime":
-			case "datetime":
-			case "datetime2":
-			case "date":
-			case "time":
-				sysType=  "DateTime";
-				  break;
-			case "datetimeoffset":
-				sysType = "DateTimeOffset";
-				break;
-  			case "float":
-				sysType="double";
-				break;
-			case "real":
-				sysType="float";
-				break;
-			case "numeric":
-			case "smallmoney":
-			case "decimal":
-			case "money":
-				sysType=  "decimal";
-				 break;
-			case "tinyint":
-				sysType = "byte";
-				break;
-			case "bit":
-				sysType=  "bool";
-				   break;
-			case "image":
-			case "binary":
-			case "varbinary":
-			case "timestamp":
-				sysType=  "byte[]";
-				 break;
-			case "geography":
-				sysType = "Microsoft.SqlServer.Types.SqlGeography";
-				break;
-			case "geometry":
-				sysType = "Microsoft.SqlServer.Types.SqlGeometry";
-				break;
-		}
-		return sysType;
-	}
+            foreach (DataRow row in dt.Select("", "ORDINAL_POSITION ASC"))
+            {
+                Console.WriteLine(row["COLUMN_NAME"] + "::" + row["DATA_TYPE"]);
+
+                Column col = new Column();
+                col.Name = row["COLUMN_NAME"].ToString();
+                col.PropertyName = CleanUp(col.Name);
+                col.PropertyType = GetPropertyType(row["DATA_TYPE"].ToString());
+                col.IsNullable = Convert.ToBoolean(row["IS_NULLABLE"]);
+                // OleDb does not support an identity column
+                // so just see if there is an 'ID' column instead
+                col.IsAutoIncrement = col.Name == "ID" && !col.IsNullable;
+                result.Add(col);
+            }
+        }
+
+        return result;
+    }
+
+    string GetPK(string table)
+    {
+        var cnn = _connection as OleDbConnection;
+        if (cnn != null)
+        {
+            var dt = cnn.GetOleDbSchemaTable(
+                OleDbSchemaGuid.Primary_Keys,
+                new object[] { null, null, table });
+
+            if (dt.Rows.Count > 0)
+            {
+                return dt.Rows[0]["COLUMN_NAME"].ToString();
+            }
+        }
+
+        return "";
+    }
+
+    // see https://msdn.microsoft.com/zh-cn/dynamics/microsoft.sqlserver.dts.runtime.wrapper.datatype
+    string GetPropertyType(string sqlType)
+    {
+        string sysType = "string";
+        switch (sqlType)
+        {
+            case "20":
+            case "21":
+                sysType = "long";
+                break;
+            case "2":
+            case "18":
+                sysType = "short";
+                break;
+            case "3":
+            case "19":
+                sysType = "int";
+                break;
+            case "72":
+                sysType = "Guid";
+                break;
+            case "7":
+            case "133":
+            case "134":
+            case "135":
+            case "145":
+            case "304":
+                sysType = "DateTime";
+                break;
+            case "5":
+                sysType = "double";
+                break;
+            case "4":
+                sysType = "float";
+                break;
+            case "6":
+            case "14":
+            case "131":
+                sysType = "decimal";
+                break;
+            case "16":
+            case "17":
+            case "128":
+                sysType = "byte";
+                break;
+            case "11":
+                sysType = "bool";
+                break;
+            case "301":
+                sysType = "byte[]";
+                break;
+        }
+        return sysType;
+    }
 }
 
 

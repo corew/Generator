@@ -63,7 +63,7 @@
     <Compile Include="Schema\PostGreSqlSchemaReader.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Schema\SchemaReader.cs" />
+    <Compile Include="SchemaReader.cs" />
     <Compile Include="Schema\SqlServerCeSchemaReader.cs" />
     <Compile Include="Schema\SqlServerSchemaReader.cs" />
     <Compile Include="Table.cs" />
