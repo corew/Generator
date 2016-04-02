@@ -77,7 +77,7 @@ namespace Generator
                     Console.WriteLine(col.ColumnName);
                 }
 
-                foreach (DataRow row in dt.Rows)
+                foreach (DataRow row in dt.Select("", "ORDINAL_POSITION ASC"))
                 {
                     Console.WriteLine(row["COLUMN_NAME"] + "::" + row["DATA_TYPE"]);
 
@@ -85,8 +85,10 @@ namespace Generator
                     col.Name = row["COLUMN_NAME"].ToString();
                     col.PropertyName = CleanUp(col.Name);
                     col.PropertyType = GetPropertyType(row["DATA_TYPE"].ToString());
-                    col.IsNullable = row["IS_NULLABLE"].ToString() == "YES";
-                    col.IsAutoIncrement = ((int)row["IsIdentity"]) == 1;
+                    col.IsNullable = Convert.ToBoolean(row["IS_NULLABLE"]);
+                    // oledb does not support an identity column
+                    // so just see if there is an 'ID' column instead
+                    col.IsAutoIncrement = col.Name == "ID" && !col.IsNullable;
                     result.Add(col);
                 }
             }
@@ -96,28 +98,17 @@ namespace Generator
 
         string GetPK(string table)
         {
-
-            string sql = @"SELECT c.name AS ColumnName
-                FROM sys.indexes AS i 
-                INNER JOIN sys.index_columns AS ic ON i.object_id = ic.object_id AND i.index_id = ic.index_id 
-                INNER JOIN sys.objects AS o ON i.object_id = o.object_id 
-                LEFT OUTER JOIN sys.columns AS c ON ic.object_id = c.object_id AND c.column_id = ic.column_id
-                WHERE (i.is_primary_key = 1) AND (o.name = @tableName)";
-
-            using (var cmd = _factory.CreateCommand())
+            var cnn = _connection as OleDbConnection;
+            if (cnn != null)
             {
-                cmd.Connection = _connection;
-                cmd.CommandText = sql;
+                var dt = cnn.GetOleDbSchemaTable(
+                    OleDbSchemaGuid.Primary_Keys,
+                    new object[] { null, null, table });
 
-                var p = cmd.CreateParameter();
-                p.ParameterName = "@tableName";
-                p.Value = table;
-                cmd.Parameters.Add(p);
-
-                var result = cmd.ExecuteScalar();
-
-                if (result != null)
-                    return result.ToString();
+                if (dt.Rows.Count > 0)
+                {
+                    return dt.Rows[0]["COLUMN_NAME"].ToString();
+                }
             }
 
             return "";
