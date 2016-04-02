@@ -28,8 +28,8 @@ namespace Generator
 		public string FirstName { get; set; }
 		public string Title { get; set; }
 		public string TitleOfCourtesy { get; set; }
-		public string BirthDate { get; set; }
-		public string HireDate { get; set; }
+		public DateTime? BirthDate { get; set; }
+		public DateTime? HireDate { get; set; }
 		public string Address { get; set; }
 		public string City { get; set; }
 		public string Region { get; set; }
@@ -37,7 +37,7 @@ namespace Generator
 		public string Country { get; set; }
 		public string HomePhone { get; set; }
 		public string Extension { get; set; }
-		public string Photo { get; set; }
+		public byte[] Photo { get; set; }
 		public string Notes { get; set; }
 		public string PhotoPath { get; set; }
 	}
@@ -49,8 +49,8 @@ namespace Generator
 		public string FirstName { get; set; }
 		public string Title { get; set; }
 		public string TitleOfCourtesy { get; set; }
-		public string BirthDate { get; set; }
-		public string HireDate { get; set; }
+		public DateTime? BirthDate { get; set; }
+		public DateTime? HireDate { get; set; }
 		public string Address { get; set; }
 		public string City { get; set; }
 		public string Region { get; set; }
@@ -58,7 +58,7 @@ namespace Generator
 		public string Country { get; set; }
 		public string HomePhone { get; set; }
 		public string Extension { get; set; }
-		public string Photo { get; set; }
+		public byte[] Photo { get; set; }
 		public string Notes { get; set; }
 		public string PhotoPath { get; set; }
 	}
@@ -98,16 +98,16 @@ namespace Generator
     {
 		public int OrderID { get; set; }
 		public string CustomsDescription { get; set; }
-		public string ExciseTax { get; set; }
+		public decimal ExciseTax { get; set; }
 	}
 
     public partial class OrderDetails
     {
 		public int OrderID { get; set; }
 		public int ProductID { get; set; }
-		public string UnitPrice { get; set; }
-		public string Quantity { get; set; }
-		public double Discount { get; set; }
+		public decimal UnitPrice { get; set; }
+		public int Quantity { get; set; }
+		public decimal Discount { get; set; }
 	}
 
     public partial class Territories
@@ -130,12 +130,12 @@ namespace Generator
 		public int? SupplierID { get; set; }
 		public int? CategoryID { get; set; }
 		public string QuantityPerUnit { get; set; }
-		public string UnitPrice { get; set; }
-		public string UnitsInStock { get; set; }
-		public string UnitsOnOrder { get; set; }
-		public string ReorderLevel { get; set; }
-		public string Discontinued { get; set; }
-		public string DiscontinuedDate { get; set; }
+		public decimal? UnitPrice { get; set; }
+		public int? UnitsInStock { get; set; }
+		public int? UnitsOnOrder { get; set; }
+		public int? ReorderLevel { get; set; }
+		public bool Discontinued { get; set; }
+		public DateTime? DiscontinuedDate { get; set; }
 	}
 
     public partial class Orders
@@ -143,10 +143,10 @@ namespace Generator
 		public int OrderID { get; set; }
 		public string CustomerID { get; set; }
 		public int? EmployeeID { get; set; }
-		public string OrderDate { get; set; }
-		public string RequiredDate { get; set; }
-		public string ShippedDate { get; set; }
-		public string Freight { get; set; }
+		public DateTime? OrderDate { get; set; }
+		public DateTime? RequiredDate { get; set; }
+		public DateTime? ShippedDate { get; set; }
+		public decimal? Freight { get; set; }
 		public string ShipName { get; set; }
 		public string ShipAddress { get; set; }
 		public string ShipCity { get; set; }
@@ -160,7 +160,7 @@ namespace Generator
 		public int CategoryID { get; set; }
 		public string CategoryName { get; set; }
 		public string Description { get; set; }
-		public string Picture { get; set; }
+		public byte[] Picture { get; set; }
 	}
 
 }

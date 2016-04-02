@@ -81,37 +81,10 @@ namespace Generator
                         col.PropertyName = CleanUp(col.Name);
                         col.PropertyType = GetPropertyType(rdr["type"].ToString());
                         col.IsNullable = rdr["notnull"].ToString() == "0";
-                        col.IsAutoIncrement = false;
-
-                        if (rdr["pk"].ToString() == "1")
-                        {
-                            var sql = "select * from sqlite_sequence where name = @tableName";
-                            try
-                            {
-                                using (var _cmd = _factory.CreateCommand())
-                                {
-                                    _cmd.Connection = _connection;
-                                    _cmd.CommandText = sql;
-
-                                    var _p = _cmd.CreateParameter();
-                                    _p.ParameterName = "@tableName";
-                                    _p.Value = tbl.Name;
-                                    _cmd.Parameters.Add(_p);
-
-                                    using (IDataReader _rdr = _cmd.ExecuteReader())
-                                    {
-                                        if (_rdr.Read())
-                                        {
-                                            col.IsAutoIncrement = true;
-                                        }
-                                    }
-                                }
-                            }
-                            catch (Exception)
-                            {
-                                // ignore
-                            }
-                        }
+                        if (col.IsPK)
+                            col.IsAutoIncrement = rdr["sql"].ToString().ToUpper().Contains("AUTOINCREMENT");
+                        else
+                            col.IsAutoIncrement = false;
 
                         result.Add(col);
                     }
@@ -144,32 +117,61 @@ namespace Generator
         string GetPropertyType(string sqlType)
         {
             string sysType = "string";
-            switch (sqlType.ToUpper())
+            switch (sqlType.ToLower())
             {
-                case "INTEGER":
+                case "integer":
+                case "int":
+                case "tinyint":
+                case "smallint":
+                case "mediumint":
+                case "int2":
+                case "int8":
                     sysType = "int";
                     break;
-                case "REAL":
+                case "bigint":
+                case "unsigned big int":
+                    sysType = "long";
+                    break;
+                case "uniqueidentifier":
+                    sysType = "Guid";
+                    break;
+                case "smalldatetime":
+                case "datetime":
+                case "date":
+                    sysType = "DateTime";
+                    break;
+                case "float":
+                case "double precision":
+                case "double":
                     sysType = "double";
                     break;
-                case "TEXT":
-                    sysType = "string";
+                case "real":
+                case "numeric":
+                case "smallmoney":
+                case "decimal":
+                case "money":
+                case "number":
+                    sysType = "decimal";
                     break;
-                case "BLOB":
+                case "bit":
+                    sysType = "bool";
+                    break;
+                case "image":
+                case "binary":
+                case "varbinary":
+                case "timestamp":
                     sysType = "byte[]";
                     break;
             }
+
             return sysType;
         }
 
 
 
-        const string TABLE_SQL = @"select * from sqlite_master 
-            where (type = 'table' or type = 'view')
-            and name != 'sqlite_sequence' 
-            and name not like 'sqlite_autoindex_TABLE_%' 
-            and name not like 'sqlite_stat%'
-            and name not like '_%_old_%'";
+
+        const string TABLE_SQL =
+            @"SELECT name, type , sql FROM sqlite_master WHERE type IN ('table','view') and name not LIKE 'sqlite_sequence%'";
 
         const string COLUMN_SQL = @"PRAGMA table_info({0})";
 
