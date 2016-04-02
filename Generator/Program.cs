@@ -72,6 +72,11 @@ namespace Generator
                         // OleDb for Access
                         reader = new OleDbSchemaReader();
                     }
+                    else if (_factory.GetType().Name == "SQLiteFactory")
+                    {
+                        // SQLite
+                        reader = new SQLiteSchemaReader();
+                    }
                     else
                     {
                         // Assume SQL Server

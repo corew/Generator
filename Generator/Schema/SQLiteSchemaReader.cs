@@ -31,9 +31,9 @@ namespace Generator
                     while (rdr.Read())
                     {
                         Table tbl = new Table();
-                        tbl.Name = rdr["TABLE_NAME"].ToString();
-                        tbl.Schema = rdr["TABLE_SCHEMA"].ToString();
-                        tbl.IsView = string.Compare(rdr["TABLE_TYPE"].ToString(), "View", true) == 0;
+                        tbl.Name = rdr["name"].ToString();
+                        tbl.Schema = null;
+                        tbl.IsView = String.Compare(rdr["type"].ToString(), "view", StringComparison.OrdinalIgnoreCase) == 0;
                         tbl.CleanName = CleanUp(tbl.Name);
                         tbl.ClassName = Inflector.MakeSingular(tbl.CleanName);
 
@@ -69,17 +69,7 @@ namespace Generator
             using (var cmd = _factory.CreateCommand())
             {
                 cmd.Connection = _connection;
-                cmd.CommandText = COLUMN_SQL;
-
-                var p = cmd.CreateParameter();
-                p.ParameterName = "@tableName";
-                p.Value = tbl.Name;
-                cmd.Parameters.Add(p);
-
-                p = cmd.CreateParameter();
-                p.ParameterName = "@schemaName";
-                p.Value = tbl.Schema;
-                cmd.Parameters.Add(p);
+                cmd.CommandText = string.Format(COLUMN_SQL, tbl.Name);
 
                 var result = new List<Column>();
                 using (IDataReader rdr = cmd.ExecuteReader())
@@ -87,11 +77,42 @@ namespace Generator
                     while (rdr.Read())
                     {
                         Column col = new Column();
-                        col.Name = rdr["ColumnName"].ToString();
+                        col.Name = rdr["name"].ToString();
                         col.PropertyName = CleanUp(col.Name);
-                        col.PropertyType = GetPropertyType(rdr["DataType"].ToString());
-                        col.IsNullable = rdr["IsNullable"].ToString() == "YES";
-                        col.IsAutoIncrement = ((int)rdr["IsIdentity"]) == 1;
+                        col.PropertyType = GetPropertyType(rdr["type"].ToString());
+                        col.IsNullable = rdr["notnull"].ToString() == "0";
+                        col.IsAutoIncrement = false;
+
+                        if (rdr["pk"].ToString() == "1")
+                        {
+                            var sql = "select * from sqlite_sequence where name = @tableName";
+                            try
+                            {
+                                using (var _cmd = _factory.CreateCommand())
+                                {
+                                    _cmd.Connection = _connection;
+                                    _cmd.CommandText = sql;
+
+                                    var _p = _cmd.CreateParameter();
+                                    _p.ParameterName = "@tableName";
+                                    _p.Value = tbl.Name;
+                                    _cmd.Parameters.Add(_p);
+
+                                    using (IDataReader _rdr = _cmd.ExecuteReader())
+                                    {
+                                        if (_rdr.Read())
+                                        {
+                                            col.IsAutoIncrement = true;
+                                        }
+                                    }
+                                }
+                            }
+                            catch (Exception)
+                            {
+                                // ignore
+                            }
+                        }
+
                         result.Add(col);
                     }
                 }
@@ -102,28 +123,19 @@ namespace Generator
 
         string GetPK(string table)
         {
-
-            string sql = @"SELECT c.name AS ColumnName
-                FROM sys.indexes AS i 
-                INNER JOIN sys.index_columns AS ic ON i.object_id = ic.object_id AND i.index_id = ic.index_id 
-                INNER JOIN sys.objects AS o ON i.object_id = o.object_id 
-                LEFT OUTER JOIN sys.columns AS c ON ic.object_id = c.object_id AND c.column_id = ic.column_id
-                WHERE (i.is_primary_key = 1) AND (o.name = @tableName)";
-
             using (var cmd = _factory.CreateCommand())
             {
                 cmd.Connection = _connection;
-                cmd.CommandText = sql;
+                cmd.CommandText = string.Format(COLUMN_SQL, table);
 
-                var p = cmd.CreateParameter();
-                p.ParameterName = "@tableName";
-                p.Value = table;
-                cmd.Parameters.Add(p);
-
-                var result = cmd.ExecuteScalar();
-
-                if (result != null)
-                    return result.ToString();
+                using (IDataReader rdr = cmd.ExecuteReader())
+                {
+                    if (rdr.Read())
+                    {
+                        if (rdr["pk"].ToString() == "1")
+                            return rdr["name"].ToString();
+                    }
+                }
             }
 
             return "";
@@ -132,59 +144,19 @@ namespace Generator
         string GetPropertyType(string sqlType)
         {
             string sysType = "string";
-            switch (sqlType)
+            switch (sqlType.ToUpper())
             {
-                case "bigint":
-                    sysType = "long";
-                    break;
-                case "smallint":
-                    sysType = "short";
-                    break;
-                case "int":
+                case "INTEGER":
                     sysType = "int";
                     break;
-                case "uniqueidentifier":
-                    sysType = "Guid";
-                    break;
-                case "smalldatetime":
-                case "datetime":
-                case "datetime2":
-                case "date":
-                case "time":
-                    sysType = "DateTime";
-                    break;
-                case "datetimeoffset":
-                    sysType = "DateTimeOffset";
-                    break;
-                case "float":
+                case "REAL":
                     sysType = "double";
                     break;
-                case "real":
-                    sysType = "float";
+                case "TEXT":
+                    sysType = "string";
                     break;
-                case "numeric":
-                case "smallmoney":
-                case "decimal":
-                case "money":
-                    sysType = "decimal";
-                    break;
-                case "tinyint":
-                    sysType = "byte";
-                    break;
-                case "bit":
-                    sysType = "bool";
-                    break;
-                case "image":
-                case "binary":
-                case "varbinary":
-                case "timestamp":
+                case "BLOB":
                     sysType = "byte[]";
-                    break;
-                case "geography":
-                    sysType = "Microsoft.SqlServer.Types.SqlGeography";
-                    break;
-                case "geometry":
-                    sysType = "Microsoft.SqlServer.Types.SqlGeometry";
                     break;
             }
             return sysType;
@@ -192,25 +164,14 @@ namespace Generator
 
 
 
-        const string TABLE_SQL = @"SELECT *
-		FROM  INFORMATION_SCHEMA.TABLES
-		WHERE TABLE_TYPE='BASE TABLE' OR TABLE_TYPE='VIEW'";
+        const string TABLE_SQL = @"select * from sqlite_master 
+            where (type = 'table' or type = 'view')
+            and name != 'sqlite_sequence' 
+            and name not like 'sqlite_autoindex_TABLE_%' 
+            and name not like 'sqlite_stat%'
+            and name not like '_%_old_%'";
 
-        const string COLUMN_SQL = @"SELECT 
-			TABLE_CATALOG AS [Database],
-			TABLE_SCHEMA AS Owner, 
-			TABLE_NAME AS TableName, 
-			COLUMN_NAME AS ColumnName, 
-			ORDINAL_POSITION AS OrdinalPosition, 
-			COLUMN_DEFAULT AS DefaultSetting, 
-			IS_NULLABLE AS IsNullable, DATA_TYPE AS DataType, 
-			CHARACTER_MAXIMUM_LENGTH AS MaxLength, 
-			DATETIME_PRECISION AS DatePrecision,
-			COLUMNPROPERTY(object_id('[' + TABLE_SCHEMA + '].[' + TABLE_NAME + ']'), COLUMN_NAME, 'IsIdentity') AS IsIdentity,
-			COLUMNPROPERTY(object_id('[' + TABLE_SCHEMA + '].[' + TABLE_NAME + ']'), COLUMN_NAME, 'IsComputed') as IsComputed
-		FROM  INFORMATION_SCHEMA.COLUMNS
-		WHERE TABLE_NAME=@tableName AND TABLE_SCHEMA=@schemaName
-		ORDER BY OrdinalPosition ASC";
+        const string COLUMN_SQL = @"PRAGMA table_info({0})";
 
     }
 }

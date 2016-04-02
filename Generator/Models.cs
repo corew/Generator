@@ -5,8 +5,8 @@
 // The following connection settings were used to generate this file
 // 
 //     Connection String Name: `connectionString`
-//     Provider:               `System.Data.OleDb`
-//     Connection String:      `Provider=Microsoft.Jet.OLEDB.4.0;Data Source=D:\201401.MDB;User Id=admin;password=**zapped**;`
+//     Provider:               `System.Data.SQLite`
+//     Connection String:      `Data Source=E:\Tools\SQLite\northwindEF.db;Version=3;`
 //     Schema:                 ``
 //     Include Views:          `False`
 
@@ -15,211 +15,152 @@ using System.Collections.Generic;
 
 namespace Generator
 {
-    public partial class sRecords
+    public partial class Regions
     {
-		public int ID { get; set; }
-		public DateTime? ScTime { get; set; }
-		public double? Output_vol { get; set; }
-		public string NAM_GL1 { get; set; }
-		public double? MBZ_GL1 { get; set; }
-		public double? CLZ_GL1 { get; set; }
-		public double? JDZ_GL1 { get; set; }
-		public double? XDZ_GL1 { get; set; }
-		public double? HSL_GL1 { get; set; }
-		public string NAM_GL2 { get; set; }
-		public double? MBZ_GL2 { get; set; }
-		public double? CLZ_GL2 { get; set; }
-		public double? JDZ_GL2 { get; set; }
-		public double? XDZ_GL2 { get; set; }
-		public double? HSL_GL2 { get; set; }
-		public string NAM_GL3 { get; set; }
-		public double? MBZ_GL3 { get; set; }
-		public double? CLZ_GL3 { get; set; }
-		public double? JDZ_GL3 { get; set; }
-		public double? XDZ_GL3 { get; set; }
-		public double? HSL_GL3 { get; set; }
-		public string NAM_GL4 { get; set; }
-		public double? MBZ_GL4 { get; set; }
-		public double? CLZ_GL4 { get; set; }
-		public double? JDZ_GL4 { get; set; }
-		public double? XDZ_GL4 { get; set; }
-		public double? HSL_GL4 { get; set; }
-		public string NAM_GL5 { get; set; }
-		public double? MBZ_GL5 { get; set; }
-		public double? CLZ_GL5 { get; set; }
-		public double? JDZ_GL5 { get; set; }
-		public double? XDZ_GL5 { get; set; }
-		public double? HSL_GL5 { get; set; }
-		public string NAM_GL6 { get; set; }
-		public double? MBZ_GL6 { get; set; }
-		public double? CLZ_GL6 { get; set; }
-		public double? JDZ_GL6 { get; set; }
-		public double? XDZ_GL6 { get; set; }
-		public double? HSL_GL6 { get; set; }
-		public string NAM_GL7 { get; set; }
-		public double? MBZ_GL7 { get; set; }
-		public double? CLZ_GL7 { get; set; }
-		public double? JDZ_GL7 { get; set; }
-		public double? XDZ_GL7 { get; set; }
-		public double? HSL_GL7 { get; set; }
-		public string NAM_GL8 { get; set; }
-		public double? MBZ_GL8 { get; set; }
-		public double? CLZ_GL8 { get; set; }
-		public double? JDZ_GL8 { get; set; }
-		public double? XDZ_GL8 { get; set; }
-		public double? HSL_GL8 { get; set; }
-		public string NAM_FLA1 { get; set; }
-		public double? MBZ_FLA1 { get; set; }
-		public double? CLZ_FLA1 { get; set; }
-		public double? JDZ_FLA1 { get; set; }
-		public double? XDZ_FLA1 { get; set; }
-		public string NAM_FLA2 { get; set; }
-		public double? MBZ_FLA2 { get; set; }
-		public double? CLZ_FLA2 { get; set; }
-		public double? JDZ_FLA2 { get; set; }
-		public double? XDZ_FLA2 { get; set; }
-		public string NAM_FLA3 { get; set; }
-		public double? MBZ_FLA3 { get; set; }
-		public double? CLZ_FLA3 { get; set; }
-		public double? JDZ_FLA3 { get; set; }
-		public double? XDZ_FLA3 { get; set; }
-		public string NAM_FLA4 { get; set; }
-		public double? MBZ_FLA4 { get; set; }
-		public double? CLZ_FLA4 { get; set; }
-		public double? JDZ_FLA4 { get; set; }
-		public double? XDZ_FLA4 { get; set; }
-		public string NAM_FLB1 { get; set; }
-		public double? MBZ_FLB1 { get; set; }
-		public double? CLZ_FLB1 { get; set; }
-		public double? JDZ_FLB1 { get; set; }
-		public double? XDZ_FLB1 { get; set; }
-		public string NAM_FLB2 { get; set; }
-		public double? MBZ_FLB2 { get; set; }
-		public double? CLZ_FLB2 { get; set; }
-		public double? JDZ_FLB2 { get; set; }
-		public double? XDZ_FLB2 { get; set; }
-		public string NAM_FLB3 { get; set; }
-		public double? MBZ_FLB3 { get; set; }
-		public double? CLZ_FLB3 { get; set; }
-		public double? JDZ_FLB3 { get; set; }
-		public double? XDZ_FLB3 { get; set; }
-		public string NAM_FLC1 { get; set; }
-		public double? MBZ_FLC1 { get; set; }
-		public double? CLZ_FLC1 { get; set; }
-		public double? JDZ_FLC1 { get; set; }
-		public double? XDZ_FLC1 { get; set; }
-		public string NAM_FLC2 { get; set; }
-		public double? MBZ_FLC2 { get; set; }
-		public double? CLZ_FLC2 { get; set; }
-		public double? JDZ_FLC2 { get; set; }
-		public double? XDZ_FLC2 { get; set; }
-		public string NAM_WJA1 { get; set; }
-		public double? MBZ_WJA1 { get; set; }
-		public double? CLZ_WJA1 { get; set; }
-		public double? JDZ_WJA1 { get; set; }
-		public double? XDZ_WJA1 { get; set; }
-		public double? HGL_WJA1 { get; set; }
-		public string NAM_WJA2 { get; set; }
-		public double? MBZ_WJA2 { get; set; }
-		public double? CLZ_WJA2 { get; set; }
-		public double? JDZ_WJA2 { get; set; }
-		public double? XDZ_WJA2 { get; set; }
-		public double? HGL_WJA2 { get; set; }
-		public string NAM_WJA3 { get; set; }
-		public double? MBZ_WJA3 { get; set; }
-		public double? CLZ_WJA3 { get; set; }
-		public double? JDZ_WJA3 { get; set; }
-		public double? XDZ_WJA3 { get; set; }
-		public double? HGL_WJA3 { get; set; }
-		public string NAM_WJA4 { get; set; }
-		public double? MBZ_WJA4 { get; set; }
-		public double? CLZ_WJA4 { get; set; }
-		public double? JDZ_WJA4 { get; set; }
-		public double? XDZ_WJA4 { get; set; }
-		public double? HGL_WJA4 { get; set; }
-		public string NAM_WJB1 { get; set; }
-		public double? MBZ_WJB1 { get; set; }
-		public double? CLZ_WJB1 { get; set; }
-		public double? JDZ_WJB1 { get; set; }
-		public double? XDZ_WJB1 { get; set; }
-		public double? HGL_WJB1 { get; set; }
-		public string NAM_WJB2 { get; set; }
-		public double? MBZ_WJB2 { get; set; }
-		public double? CLZ_WJB2 { get; set; }
-		public double? JDZ_WJB2 { get; set; }
-		public double? XDZ_WJB2 { get; set; }
-		public double? HGL_WJB2 { get; set; }
-		public string NAM_WJB3 { get; set; }
-		public double? MBZ_WJB3 { get; set; }
-		public double? CLZ_WJB3 { get; set; }
-		public double? JDZ_WJB3 { get; set; }
-		public double? XDZ_WJB3 { get; set; }
-		public double? HGL_WJB3 { get; set; }
-		public string NAM_WJB4 { get; set; }
-		public double? MBZ_WJB4 { get; set; }
-		public double? CLZ_WJB4 { get; set; }
-		public double? JDZ_WJB4 { get; set; }
-		public double? XDZ_WJB4 { get; set; }
-		public double? HGL_WJB4 { get; set; }
-		public string NAM_WJC1 { get; set; }
-		public double? MBZ_WJC1 { get; set; }
-		public double? CLZ_WJC1 { get; set; }
-		public double? JDZ_WJC1 { get; set; }
-		public double? XDZ_WJC1 { get; set; }
-		public double? HGL_WJC1 { get; set; }
-		public string NAM_WJC2 { get; set; }
-		public double? MBZ_WJC2 { get; set; }
-		public double? CLZ_WJC2 { get; set; }
-		public double? JDZ_WJC2 { get; set; }
-		public double? XDZ_WJC2 { get; set; }
-		public double? HGL_WJC2 { get; set; }
-		public string NAM_WJC3 { get; set; }
-		public double? MBZ_WJC3 { get; set; }
-		public double? CLZ_WJC3 { get; set; }
-		public double? JDZ_WJC3 { get; set; }
-		public double? XDZ_WJC3 { get; set; }
-		public double? HGL_WJC3 { get; set; }
-		public string NAM_WJC4 { get; set; }
-		public double? MBZ_WJC4 { get; set; }
-		public double? CLZ_WJC4 { get; set; }
-		public double? JDZ_WJC4 { get; set; }
-		public double? XDZ_WJC4 { get; set; }
-		public double? HGL_WJC4 { get; set; }
-		public string NAM_Shui1 { get; set; }
-		public double? MBZ_Shui1 { get; set; }
-		public double? CLZ_Shui1 { get; set; }
-		public double? JDZ_Shui1 { get; set; }
-		public double? XDZ_Shui1 { get; set; }
-		public string NAM_Shui2 { get; set; }
-		public double? MBZ_Shui2 { get; set; }
-		public double? CLZ_Shui2 { get; set; }
-		public double? JDZ_Shui2 { get; set; }
-		public double? XDZ_Shui2 { get; set; }
-		public string Job_No { get; set; }
-		public string Prop_No { get; set; }
-		public string Cust_Nm { get; set; }
-		public string Proj_Nm { get; set; }
-		public string Location { get; set; }
-		public string Site_No { get; set; }
-		public string Contr_No { get; set; }
-		public string Tech_Req { get; set; }
-		public string Delivery_Mode { get; set; }
-		public string Remark { get; set; }
-		public string Truck_No { get; set; }
-		public string Driver { get; set; }
-		public string Strength { get; set; }
-		public string RecordRemark { get; set; }
-		public string SynchRemark { get; set; }
-		public int? SaJiangSymbol { get; set; }
-		public int? ReadState { get; set; }
-		public string Operator { get; set; }
-		public string AttemperCode { get; set; }
-		public string ProduceLine { get; set; }
-		public string Const_Unit { get; set; }
-		public double? Truck_vol { get; set; }
-		public string KangShenLevel { get; set; }
-		public string TaLuoDu { get; set; }
-		public double? OperationState { get; set; }
+		public int RegionID { get; set; }
+		public string RegionDescription { get; set; }
+	}
+
+    public partial class PreviousEmployees
+    {
+		public int EmployeeID { get; set; }
+		public string LastName { get; set; }
+		public string FirstName { get; set; }
+		public string Title { get; set; }
+		public string TitleOfCourtesy { get; set; }
+		public string BirthDate { get; set; }
+		public string HireDate { get; set; }
+		public string Address { get; set; }
+		public string City { get; set; }
+		public string Region { get; set; }
+		public string PostalCode { get; set; }
+		public string Country { get; set; }
+		public string HomePhone { get; set; }
+		public string Extension { get; set; }
+		public string Photo { get; set; }
+		public string Notes { get; set; }
+		public string PhotoPath { get; set; }
+	}
+
+    public partial class Employees
+    {
+		public int EmployeeID { get; set; }
+		public string LastName { get; set; }
+		public string FirstName { get; set; }
+		public string Title { get; set; }
+		public string TitleOfCourtesy { get; set; }
+		public string BirthDate { get; set; }
+		public string HireDate { get; set; }
+		public string Address { get; set; }
+		public string City { get; set; }
+		public string Region { get; set; }
+		public string PostalCode { get; set; }
+		public string Country { get; set; }
+		public string HomePhone { get; set; }
+		public string Extension { get; set; }
+		public string Photo { get; set; }
+		public string Notes { get; set; }
+		public string PhotoPath { get; set; }
+	}
+
+    public partial class Customers
+    {
+		public string CustomerID { get; set; }
+		public string CompanyName { get; set; }
+		public string ContactName { get; set; }
+		public string ContactTitle { get; set; }
+		public string Address { get; set; }
+		public string City { get; set; }
+		public string Region { get; set; }
+		public string PostalCode { get; set; }
+		public string Country { get; set; }
+		public string Phone { get; set; }
+		public string Fax { get; set; }
+	}
+
+    public partial class Suppliers
+    {
+		public int SupplierID { get; set; }
+		public string CompanyName { get; set; }
+		public string ContactName { get; set; }
+		public string ContactTitle { get; set; }
+		public string Address { get; set; }
+		public string City { get; set; }
+		public string Region { get; set; }
+		public string PostalCode { get; set; }
+		public string Country { get; set; }
+		public string Phone { get; set; }
+		public string Fax { get; set; }
+		public string HomePage { get; set; }
+	}
+
+    public partial class InternationalOrders
+    {
+		public int OrderID { get; set; }
+		public string CustomsDescription { get; set; }
+		public string ExciseTax { get; set; }
+	}
+
+    public partial class OrderDetails
+    {
+		public int OrderID { get; set; }
+		public int ProductID { get; set; }
+		public string UnitPrice { get; set; }
+		public string Quantity { get; set; }
+		public double Discount { get; set; }
+	}
+
+    public partial class Territories
+    {
+		public int TerritoryID { get; set; }
+		public string TerritoryDescription { get; set; }
+		public int RegionID { get; set; }
+	}
+
+    public partial class EmployeesTerritories
+    {
+		public int EmployeeID { get; set; }
+		public int TerritoryID { get; set; }
+	}
+
+    public partial class Products
+    {
+		public int ProductID { get; set; }
+		public string ProductName { get; set; }
+		public int? SupplierID { get; set; }
+		public int? CategoryID { get; set; }
+		public string QuantityPerUnit { get; set; }
+		public string UnitPrice { get; set; }
+		public string UnitsInStock { get; set; }
+		public string UnitsOnOrder { get; set; }
+		public string ReorderLevel { get; set; }
+		public string Discontinued { get; set; }
+		public string DiscontinuedDate { get; set; }
+	}
+
+    public partial class Orders
+    {
+		public int OrderID { get; set; }
+		public string CustomerID { get; set; }
+		public int? EmployeeID { get; set; }
+		public string OrderDate { get; set; }
+		public string RequiredDate { get; set; }
+		public string ShippedDate { get; set; }
+		public string Freight { get; set; }
+		public string ShipName { get; set; }
+		public string ShipAddress { get; set; }
+		public string ShipCity { get; set; }
+		public string ShipRegion { get; set; }
+		public string ShipPostalCode { get; set; }
+		public string ShipCountry { get; set; }
+	}
+
+    public partial class Categories
+    {
+		public int CategoryID { get; set; }
+		public string CategoryName { get; set; }
+		public string Description { get; set; }
+		public string Picture { get; set; }
 	}
 
 }
