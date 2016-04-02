@@ -114,62 +114,56 @@ namespace Generator
             return "";
         }
 
+        // see https://msdn.microsoft.com/zh-cn/dynamics/microsoft.sqlserver.dts.runtime.wrapper.datatype
         string GetPropertyType(string sqlType)
         {
             string sysType = "string";
             switch (sqlType)
             {
-                case "bigint":
+                case "20":
+                case "21":
                     sysType = "long";
                     break;
-                case "smallint":
+                case "2":
+                case "18":
                     sysType = "short";
                     break;
-                case "int":
+                case "3":
+                case "19":
                     sysType = "int";
                     break;
-                case "uniqueidentifier":
+                case "72":
                     sysType = "Guid";
                     break;
-                case "smalldatetime":
-                case "datetime":
-                case "datetime2":
-                case "date":
-                case "time":
+                case "7":
+                case "133":
+                case "134":
+                case "135":
+                case "145":
+                case "304":
                     sysType = "DateTime";
                     break;
-                case "datetimeoffset":
-                    sysType = "DateTimeOffset";
-                    break;
-                case "float":
+                case "5":
                     sysType = "double";
                     break;
-                case "real":
+                case "4":
                     sysType = "float";
                     break;
-                case "numeric":
-                case "smallmoney":
-                case "decimal":
-                case "money":
+                case "6":
+                case "14":
+                case "131":
                     sysType = "decimal";
                     break;
-                case "tinyint":
+                case "16":
+                case "17":
+                case "128":
                     sysType = "byte";
                     break;
-                case "bit":
+                case "11":
                     sysType = "bool";
                     break;
-                case "image":
-                case "binary":
-                case "varbinary":
-                case "timestamp":
+                case "301":
                     sysType = "byte[]";
-                    break;
-                case "geography":
-                    sysType = "Microsoft.SqlServer.Types.SqlGeography";
-                    break;
-                case "geometry":
-                    sysType = "Microsoft.SqlServer.Types.SqlGeometry";
                     break;
             }
             return sysType;
