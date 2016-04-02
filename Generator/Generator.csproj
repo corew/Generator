@@ -52,8 +52,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Cmmon\Column.cs" />
-    <Compile Include="Cmmon\Inflector.cs" />
+    <Compile Include="Common\Column.cs" />
+    <Compile Include="Common\Inflector.cs" />
     <Compile Include="T4\Models.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -65,12 +65,12 @@
     <Compile Include="Schema\PostGreSqlSchemaReader.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Cmmon\SchemaReader.cs" />
+    <Compile Include="Common\SchemaReader.cs" />
     <Compile Include="Schema\SQLiteSchemaReader.cs" />
     <Compile Include="Schema\SqlServerCeSchemaReader.cs" />
     <Compile Include="Schema\SqlServerSchemaReader.cs" />
-    <Compile Include="Cmmon\Table.cs" />
-    <Compile Include="Cmmon\Tables.cs" />
+    <Compile Include="Common\Table.cs" />
+    <Compile Include="Common\Tables.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
