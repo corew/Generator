@@ -66,6 +66,6 @@ use the T4 template to auto generate POCO models
 
 refs:
 
-> http://subsonicproject.com
-> https://github.com/CollaboratingPlatypus/PetaPoco  
-> https://github.com/ServiceStack/ServiceStack.OrmLite  
+> http://subsonicproject.com    
+> https://github.com/CollaboratingPlatypus/PetaPoco    
+> https://github.com/ServiceStack/ServiceStack.OrmLite    
