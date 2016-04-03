@@ -2,8 +2,7 @@
 use the T4 template to auto generate POCO models
 
 
- This code is part of the `PetaPoco` project (http://www.toptensoftware.com/petapoco).  
- It is based on the `SubSonic` T4 templates but has been considerably re-organized and reduced  
+ This code is based on the `PetaPoco` project and `SubSonic` T4 templates but has been considerably re-organized and reduced  
  
  -----------------------------------------------------------------------------------------
 
@@ -67,5 +66,6 @@ use the T4 template to auto generate POCO models
 
 refs:
 
+> http://subsonicproject.com
 > https://github.com/CollaboratingPlatypus/PetaPoco  
 > https://github.com/ServiceStack/ServiceStack.OrmLite  
