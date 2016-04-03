@@ -15,7 +15,7 @@ use the T4 template to auto generate POCO models
 	* PostGreSQL
 	* Oracle
 	* SQLite
-	* OleDb for access
+	* OleDb for Access
 
  For connection and provider settings the template will look for the web.config or app.config file of the 
  containing Visual Studio project.  It will not however read DbProvider settings from this file.
